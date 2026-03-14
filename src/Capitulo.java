@@ -3,10 +3,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Capitulo {
 
     @Id
@@ -22,12 +24,10 @@ public class Capitulo {
     @Column(name = "descripcion", nullable = false, length = 1000)
     protected String descripcion;
 
-    protected Capitulo() {
-    }
-
+    @Builder
     public Capitulo(int numero, String titulo, String descripcion) {
         if (numero <= 0) {
-            throw new IllegalArgumentException("El número de capítulo debe ser mayor que 0");
+            throw new IllegalArgumentException("El número debe ser mayor que 0");
         }
         if (titulo == null || titulo.isBlank()) {
             throw new IllegalArgumentException("El título no puede ser nulo ni vacío");
@@ -38,36 +38,6 @@ public class Capitulo {
 
         this.numero = numero;
         this.titulo = titulo;
-        this.descripcion = descripcion;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public int getNumero() {
-        return numero;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void cambiarTitulo(String titulo) {
-        if (titulo == null || titulo.isBlank()) {
-            throw new IllegalArgumentException("El título no puede ser nulo ni vacío");
-        }
-        this.titulo = titulo;
-    }
-
-    public void cambiarDescripcion(String descripcion) {
-        if (descripcion == null || descripcion.isBlank()) {
-            throw new IllegalArgumentException("La descripción no puede ser nula ni vacía");
-        }
         this.descripcion = descripcion;
     }
 }

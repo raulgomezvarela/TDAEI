@@ -4,13 +4,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Temporada {
 
     @Id
@@ -21,43 +25,24 @@ public class Temporada {
     protected int numero;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "temporada_id")
     protected List<Capitulo> capitulos;
 
-    protected Temporada() {
-        this.capitulos = new ArrayList<>();
-    }
-
-    public Temporada(int numero) {
+    @Builder
+    public Temporada(int numero, List<Capitulo> capitulos) {
         if (numero <= 0) {
             throw new IllegalArgumentException("El número de temporada debe ser mayor que 0");
         }
         this.numero = numero;
-        this.capitulos = new ArrayList<>();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public int getNumero() {
-        return numero;
-    }
-
-    public List<Capitulo> getCapitulos() {
-        return new ArrayList<>(capitulos);
-    }
-
-    public void agregarCapitulo(Capitulo capitulo) {
-        if (capitulo == null) {
-            throw new IllegalArgumentException("El capítulo no puede ser nulo");
-        }
-        this.capitulos.add(capitulo);
+        this.capitulos = (capitulos != null) ? capitulos : new ArrayList<>();
     }
 
     public Capitulo obtenerCapitulo(int numero) {
-        return capitulos.stream()
-                .filter(capitulo -> capitulo.getNumero() == numero)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No existe un capítulo con ese número"));
+        for (Capitulo capitulo : capitulos) {
+            if (capitulo.numero == numero) {
+                return capitulo;
+            }
+        }
+        throw new IllegalArgumentException("No existe un capítulo con ese número");
     }
 }

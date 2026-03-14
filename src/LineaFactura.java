@@ -1,8 +1,13 @@
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LineaFactura {
 
     protected LocalDate fechaVisualizacion;
@@ -13,21 +18,16 @@ public class LineaFactura {
     @Embedded
     protected Dinero importe;
 
-    protected LineaFactura() {
-    }
-
+    @Builder
     public LineaFactura(LocalDate fechaVisualizacion, String tituloSerie, int temporada, int numeroCapitulo, Dinero importe) {
         if (fechaVisualizacion == null) {
-            throw new IllegalArgumentException("La fecha de visualización no puede ser nula");
+            throw new IllegalArgumentException("La fecha no puede ser nula");
         }
         if (tituloSerie == null || tituloSerie.isBlank()) {
-            throw new IllegalArgumentException("El título de la serie no puede ser nulo ni vacío");
+            throw new IllegalArgumentException("El título de serie no puede ser nulo ni vacío");
         }
-        if (temporada <= 0) {
-            throw new IllegalArgumentException("La temporada debe ser mayor que 0");
-        }
-        if (numeroCapitulo <= 0) {
-            throw new IllegalArgumentException("El número de capítulo debe ser mayor que 0");
+        if (temporada <= 0 || numeroCapitulo <= 0) {
+            throw new IllegalArgumentException("Temporada y número de capítulo deben ser mayores que 0");
         }
         if (importe == null) {
             throw new IllegalArgumentException("El importe no puede ser nulo");
@@ -38,25 +38,5 @@ public class LineaFactura {
         this.temporada = temporada;
         this.numeroCapitulo = numeroCapitulo;
         this.importe = importe;
-    }
-
-    public LocalDate getFechaVisualizacion() {
-        return fechaVisualizacion;
-    }
-
-    public String getTituloSerie() {
-        return tituloSerie;
-    }
-
-    public int getTemporada() {
-        return temporada;
-    }
-
-    public int getNumeroCapitulo() {
-        return numeroCapitulo;
-    }
-
-    public Dinero getImporte() {
-        return importe;
     }
 }

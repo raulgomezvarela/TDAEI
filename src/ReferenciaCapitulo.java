@@ -1,9 +1,11 @@
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
-import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReferenciaCapitulo {
 
     @Column(name = "temporada", nullable = false)
@@ -12,35 +14,12 @@ public class ReferenciaCapitulo {
     @Column(name = "numero_capitulo", nullable = false)
     protected int numeroCapitulo;
 
-    protected ReferenciaCapitulo() {
-    }
-
+    @Builder
     public ReferenciaCapitulo(int temporada, int numeroCapitulo) {
-        if (temporada <= 0) {
-            throw new IllegalArgumentException("La temporada debe ser mayor que 0");
-        }
-        if (numeroCapitulo <= 0) {
-            throw new IllegalArgumentException("El número de capítulo debe ser mayor que 0");
+        if (temporada <= 0 || numeroCapitulo <= 0) {
+            throw new IllegalArgumentException("Temporada y número de capítulo deben ser mayores que 0");
         }
         this.temporada = temporada;
         this.numeroCapitulo = numeroCapitulo;
-    }
-
-    public int getTemporada() {
-        return temporada;
-    }
-
-    public int getNumeroCapitulo() {
-        return numeroCapitulo;
-    }
-
-    public boolean esPosteriorA(ReferenciaCapitulo otra) {
-        if (otra == null) {
-            throw new IllegalArgumentException("La referencia a comparar no puede ser nula");
-        }
-        if (this.temporada != otra.temporada) {
-            return this.temporada > otra.temporada;
-        }
-        return this.numeroCapitulo > otra.numeroCapitulo;
     }
 }

@@ -1,43 +1,27 @@
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
-import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Iban {
 
-    @Column(name = "iban", nullable = false, unique = true, length = 34)
+    @Column(name = "iban", nullable = false, length = 34)
     protected String valor;
 
-    protected Iban() {
-    }
-
+    @Builder
     public Iban(String valor) {
         if (valor == null || valor.isBlank()) {
             throw new IllegalArgumentException("El IBAN no puede ser nulo ni vacío");
         }
-
-        String ibanNormalizado = valor.replaceAll("\\s+", "").toUpperCase();
-
-        if (!esFormatoValido(ibanNormalizado)) {
-            throw new IllegalArgumentException("El formato del IBAN no es válido");
-        }
-
-        this.valor = ibanNormalizado;
-    }
-
-    public String getValor() {
-        return valor;
+        this.valor = valor.replaceAll("\\s+", "").toUpperCase();
     }
 
     public void validarFormato() {
-        if (!esFormatoValido(this.valor)) {
-            throw new IllegalStateException("El IBAN almacenado no es válido");
+        if (!this.valor.matches("^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$")) {
+            throw new IllegalArgumentException("Formato de IBAN no válido");
         }
     }
-
-    private boolean esFormatoValido(String iban) {
-        return iban.matches("^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$");
-    }
-
 }
